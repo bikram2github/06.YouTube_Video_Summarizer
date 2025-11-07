@@ -60,7 +60,6 @@ def extract(url):
 
 @st.cache_resource
 def get_groq_model(api_key: str):
-    """Cache LLM instance since model loading is expensive."""
     return ChatGroq(api_key=api_key, model="openai/gpt-oss-20b", temperature=0.6)
 
 
