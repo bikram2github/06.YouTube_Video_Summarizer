@@ -7,7 +7,11 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from langchain_core.output_parsers import StrOutputParser
 parser=StrOutputParser()
 
-yt_api = YouTubeTranscriptApi()
+@st.cache_resource
+def get_transcript_api():
+    return YouTubeTranscriptApi()
+
+yt_api = get_transcript_api()
 
 st.title("YouTube Video Summarizer")
 st.subheader("Summarize YouTube videos using Groq LLM")
@@ -41,7 +45,7 @@ url= st.text_input("Enter YouTube Video URL",label_visibility="collapsed")
 
 
 
-
+@st.cache_data(show_spinner=False)
 def extract(url):
     try:
         video_id= url.split("=")[1]
@@ -54,10 +58,15 @@ def extract(url):
     except Exception as e:
         return None
 
+@st.cache_resource
+def get_groq_model(api_key: str):
+    """Cache LLM instance since model loading is expensive."""
+    return ChatGroq(api_key=api_key, model="openai/gpt-oss-20b", temperature=0.6)
+
 
 def summarize(text):
     try:
-        llm = ChatGroq(api_key=api_key, model="openai/gpt-oss-20b", temperature=0.6)
+        llm = get_groq_model(api_key)
         chain = prompt | llm | parser
         response = chain.invoke({"text": text})
         return response
