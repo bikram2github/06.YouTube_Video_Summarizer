@@ -85,5 +85,7 @@ if st.button("Summarize"):
                 with st.spinner("Generating summary..."):
                     summary = summarize(yt_text)
                     if summary:
+                        video_id = url.split("=")[1]
+                        st.image(f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg", use_container_width=True)
                         st.subheader("Video Summary")
                         st.success(summary)
