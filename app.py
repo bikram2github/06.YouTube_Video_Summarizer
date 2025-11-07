@@ -52,7 +52,7 @@ def extract(url):
         return full_yt_text
 
     except Exception as e:
-        return st.error(f"Error in extracting video content: {e}")
+        return None
 
 
 def summarize(text):
@@ -62,7 +62,7 @@ def summarize(text):
         response = chain.invoke({"text": text})
         return response
     except Exception as e:
-        return st.error(f"Error extracting video content: {e}")
+        return st.error(f"Please enter a valid YouTube Video URL. {e}")
 
 
 
@@ -77,7 +77,6 @@ if st.button("Summarize"):
         with st.spinner("Extracting video content..."):
             yt_text = extract(url)
 
-
             if yt_text is None:
                 st.error("Please enter a valid YouTube Video URL.")
 
@@ -85,6 +84,7 @@ if st.button("Summarize"):
                 with st.spinner("Generating summary..."):
                     summary = summarize(yt_text)
                     if summary:
+                        st.subheader("Video Thumbnail")
                         video_id = url.split("=")[1]
                         st.image(f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg", use_container_width=True)
                         st.subheader("Video Summary")
